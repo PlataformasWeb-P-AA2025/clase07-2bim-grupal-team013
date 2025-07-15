@@ -14,6 +14,7 @@
         <p><strong>Cédula:</strong> {{ estudiante.cedula }}</p>
         <p><strong>Correo:</strong> {{ estudiante.correo }}</p>
         <p><strong>Edad:</strong> {{ estudiante.edad }}</p>
+
         <h4>Números Telefónicos:</h4>
         <ul v-if="numerosTelefonicos.length">
           <li v-for="numero in numerosTelefonicos" :key="numero.url">
@@ -53,7 +54,6 @@
             id="cedula"
             v-model="editedEstudiante.cedula"
             required
-            :readonly="isEditing"
           />
         </div>
         <div class="form-group">
@@ -124,8 +124,9 @@ export default {
       async handler(newVal, oldVal) {
         if (newVal && newVal !== oldVal) {
           // Si hay un cambio significativo en la URL del estudiante
-          await this.fetchEstudianteDetail(decodeURIComponent(newVal));
-          await this.fetchNumerosTelefonicos(decodeURIComponent(newVal));
+          const decodedUrl = decodeURIComponent(newVal);
+          await this.fetchEstudianteDetail(decodedUrl);
+          await this.fetchNumerosTelefonicos(decodedUrl);
           // Resetear el modo edición al cargar un nuevo estudiante
           this.isEditing = this.route.query.mode === "edit";
         }
@@ -144,7 +145,6 @@ export default {
     },
   },
   async created() {
-    // Si el componente se crea directamente en una ruta de edición (ej. refresh)
     // El watcher 'estudianteUrl' ya se encarga de cargar los datos y el watcher 'route.query.mode'
     // de establecer isEditing.
   },
@@ -157,7 +157,7 @@ export default {
         const response = await estudianteApi.getEstudianteByUrl(url);
         this.estudiante = response.data;
         // Inicializa editedEstudiante con los datos cargados para el formulario de edición
-        this.editedEstudiante = { ...response.estudiante }; // Asegúrate de que los campos coincidan
+        this.editedEstudiante = { ...response.data }; // Asegúrate de que los campos coincidan
       } catch (err) {
         console.error(
           "Error al cargar detalle del estudiante:",
@@ -178,8 +178,9 @@ export default {
       console.log("Fetching numeros for:", estudianteApiUrl); // Para depuración
       try {
         // Asumo que tu endpoint 'numerosts/' devuelve todos los números, y luego filtras.
-        // Si tu API tiene un endpoint para obtener números de un estudiante específico (ej. /estudiantes/{id}/numerosts/), úsalo.
-        const response = await estudianteApi.getNumerosTelefonicos(); // Asume que tienes un getNumerosTelefonicos en students.js o un api global
+        // Si tu API tiene un endpoint para obtener números de un estudiante específico
+        // (ej. /estudiantes/{id}/numerosts/), úsalo en estudianteApi.
+        const response = await estudianteApi.getNumerosTelefonicos();
         this.numerosTelefonicos = response.data.results.filter(
           (numero) => numero.estudiante === estudianteApiUrl
         );
@@ -193,7 +194,7 @@ export default {
     },
     goBack() {
       // Vuelve a la lista de estudiantes
-      this.$router.push("/estudiantes");
+      this.router.push("/estudiantes");
     },
     startEditing() {
       this.isEditing = true;
