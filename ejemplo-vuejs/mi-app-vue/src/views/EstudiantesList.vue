@@ -74,6 +74,7 @@ export default {
         // Usa el nuevo servicio de API para estudiantes
         const response = await estudianteApi.getEstudiantes();
         // Asegúrate de que tu API de Django devuelva los resultados en .results
+        // o directamente en response.data si no hay paginación.
         this.estudiantes = response.data.results || response.data;
         console.log("Estudiantes cargados:", this.estudiantes);
       } catch (err) {
@@ -85,7 +86,7 @@ export default {
         this.loading = false;
       }
     },
-    // **NUEVO: Método para confirmar y eliminar**
+    // Método para confirmar y eliminar
     async confirmDelete(estudianteUrl) {
       if (confirm("¿Estás seguro de que quieres eliminar a este estudiante?")) {
         try {
@@ -141,17 +142,6 @@ ul {
 .estudiante-info {
   flex-grow: 1; /* Permite que la info del estudiante ocupe el espacio disponible */
 }
-
-/* No hay un <a> directo en .estudiante-item para el detalle, se usan botones/router-links */
-/* .estudiante-item a { */
-/* text-decoration: none; */
-/* color: #007bff; */
-/* font-weight: bold; */
-/* } */
-
-/* .estudiante-item a:hover { */
-/* text-decoration: underline; */
-/* } */
 
 .estudiante-actions {
   display: flex;
