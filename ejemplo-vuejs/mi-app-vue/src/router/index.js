@@ -4,6 +4,7 @@ import Login from "../views/Login.vue";
 import EstudiantesList from "../views/EstudiantesList.vue";
 import EstudianteDetail from "../views/EstudianteDetail.vue";
 import TelefonosList from "../views/TelefonosList.vue";
+import TelefonoEdit from "@/views/TelefonoEdit.vue";
 
 const routes = [
   {
@@ -34,6 +35,12 @@ const routes = [
     name: "TelefonosList",
     component: TelefonosList,
     meta: { requiresAuth: true }, // Marca esta ruta como protegida
+  },
+  {
+    path: "/telefonos/editar/:id",
+    name: "EditarTelefono",
+    component: TelefonoEdit,
+    meta: { requiresAuth: true },
   },
 ];
 
