@@ -9,26 +9,50 @@
         :key="estudiante.url"
         class="estudiante-item"
       >
-        <router-link
-          :to="{
-            name: 'EstudianteDetail',
-            params: { estudianteUrl: estudiante.url },
-          }"
-        >
-          {{ estudiante.nombre }} {{ estudiante.apellido }} (Cédula:
-          {{ estudiante.cedula }})
-        </router-link>
+        <div class="estudiante-info">
+          <span>
+            {{ estudiante.nombre }} {{ estudiante.apellido }} (Cédula:
+            {{ estudiante.cedula }})
+          </span>
+        </div>
+        <div class="estudiante-actions">
+          <router-link
+            :to="{
+              name: 'EstudianteDetail',
+              params: { estudianteUrl: encodeURIComponent(estudiante.url) },
+            }"
+            class="btn btn-detail"
+          >
+            Ver Detalle
+          </router-link>
+
+          <router-link
+            :to="{
+              name: 'EstudianteDetail',
+              params: { estudianteUrl: encodeURIComponent(estudiante.url) },
+              query: { mode: 'edit' }, // Añadimos un query param para indicar modo edición
+            }"
+            class="btn btn-edit"
+          >
+            Editar
+          </router-link>
+
+          <button @click="confirmDelete(estudiante.url)" class="btn btn-delete">
+            Eliminar
+          </button>
+        </div>
       </li>
     </ul>
     <p v-else>No hay estudiantes registrados.</p>
-    <router-link to="/estudiantes/nuevo" class="add-button"
-      >Agregar Nuevo Estudiante</router-link
-    >
+    <router-link to="/estudiantes/nuevo" class="add-button">
+      Agregar Nuevo Estudiante
+    </router-link>
   </div>
 </template>
 
 <script>
-import api from "@/api/axios";
+// Importa el nuevo servicio de estudiantes, que a su vez usa '@/api/axios'
+import estudianteApi from "@/api/students";
 
 export default {
   name: "EstudiantesList",
@@ -47,18 +71,35 @@ export default {
       try {
         this.loading = true;
         this.error = null;
-        const response = await api.get("estudiantes/");
+        // Usa el nuevo servicio de API para estudiantes
+        const response = await estudianteApi.getEstudiantes();
+        // Asegúrate de que tu API de Django devuelva los resultados en .results
         this.estudiantes = response.data.results || response.data;
         console.log("Estudiantes cargados:", this.estudiantes);
       } catch (err) {
         console.error("Error al cargar estudiantes:", err.response || err);
         this.error =
           "No se pudieron cargar los estudiantes. Asegúrate de estar logueado.";
+        // Si el error es 401, el interceptor de axios.js debería manejar la redirección.
       } finally {
         this.loading = false;
       }
     },
-    // Ya no necesitamos getEstudianteId() si pasamos la URL completa
+    // **NUEVO: Método para confirmar y eliminar**
+    async confirmDelete(estudianteUrl) {
+      if (confirm("¿Estás seguro de que quieres eliminar a este estudiante?")) {
+        try {
+          // Usa el nuevo servicio de API para estudiantes para la eliminación
+          await estudianteApi.deleteEstudiante(estudianteUrl);
+          alert("¡Estudiante eliminado exitosamente!");
+          await this.fetchEstudiantes(); // Recargar la lista después de la eliminación
+        } catch (err) {
+          console.error("Error al eliminar estudiante:", err.response || err);
+          alert("Error al eliminar estudiante. Por favor, inténtalo de nuevo.");
+          // El interceptor de axios.js debería manejar el 401
+        }
+      }
+    },
   },
 };
 </script>
@@ -86,6 +127,9 @@ ul {
 }
 
 .estudiante-item {
+  display: flex; /* Usamos flexbox para alinear info y botones */
+  justify-content: space-between;
+  align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #eee;
 }
@@ -94,14 +138,59 @@ ul {
   border-bottom: none;
 }
 
-.estudiante-item a {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: bold;
+.estudiante-info {
+  flex-grow: 1; /* Permite que la info del estudiante ocupe el espacio disponible */
 }
 
-.estudiante-item a:hover {
-  text-decoration: underline;
+/* No hay un <a> directo en .estudiante-item para el detalle, se usan botones/router-links */
+/* .estudiante-item a { */
+/* text-decoration: none; */
+/* color: #007bff; */
+/* font-weight: bold; */
+/* } */
+
+/* .estudiante-item a:hover { */
+/* text-decoration: underline; */
+/* } */
+
+.estudiante-actions {
+  display: flex;
+  gap: 8px; /* Espacio entre los botones */
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  text-decoration: none; /* Para router-link */
+  text-align: center;
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+
+.btn-detail {
+  background-color: #007bff;
+  color: white;
+}
+.btn-detail:hover {
+  background-color: #0056b3;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #333;
+}
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-delete:hover {
+  background-color: #c82333;
 }
 
 .add-button {
