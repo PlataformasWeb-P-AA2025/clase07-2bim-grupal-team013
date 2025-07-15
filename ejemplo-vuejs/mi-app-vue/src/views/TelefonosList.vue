@@ -6,31 +6,43 @@
     <ul v-else-if="telefonos.length">
       <li
         v-for="telefono in telefonos"
-        :key="telefono.id"
+        :key="telefono.url"
         class="telefono-item"
       >
         <p><strong>Teléfono:</strong> {{ telefono.telefono }}</p>
         <p><strong>Tipo:</strong> {{ telefono.tipo }}</p>
         <p><strong>Estudiante:</strong> {{ telefono.estudiante }}</p>
 
-        <button @click="editarTelefono(telefono.id)" class="btn btn-edit">
-          Editar
-        </button>
+        <router-link
+          :to="{
+            name: 'TelefonoDetail',
+            params: { telefonoUrl: encodeURIComponent(telefono.url) }
+          }"
+          class="btn btn-detail"
+        >Ver Detalle</router-link>
 
-        <button @click="eliminarTelefono(telefono.id)" class="btn btn-delete">
-          Eliminar
-        </button>
+        <router-link
+          :to="{
+            name: 'TelefonoDetail',
+            params: { telefonoUrl: encodeURIComponent(telefono.url) },
+            query: { mode: 'edit' }
+          }"
+          class="btn btn-edit"
+        >Editar</router-link>
+
+        <button @click="confirmDelete(telefono.url)" class="btn btn-delete">Eliminar</button>
       </li>
     </ul>
     <p v-else>No hay teléfonos registrados.</p>
+    <router-link to="/telefonos/nuevo" class="add-button">Agregar Teléfono</router-link>
   </div>
 </template>
 
 <script>
-import api from "@/api/axios";
+import telefonoApi from "@/api/telefonos"; // Asegúrate de tener este archivo creado
 
 export default {
-  name: "TelefonosList",
+  name: "TelefonoList",
   data() {
     return {
       telefonos: [],
@@ -45,31 +57,25 @@ export default {
     async fetchTelefonos() {
       this.loading = true;
       try {
-        const response = await api.get("numerosts/");
+        const response = await telefonoApi.getTelefonos();
         this.telefonos = response.data.results || response.data;
       } catch (error) {
-        this.error = "Error al cargar los teléfonos.";
         console.error(error);
+        this.error = "Error al cargar los teléfonos.";
       } finally {
         this.loading = false;
       }
     },
-    editarTelefono(id) {
-      this.$router.push({ name: "EditarTelefono", params: { id } });
-    },
-    async eliminarTelefono(id) {
-      const confirmar = confirm(
-        "¿Estás segura de que deseas eliminar este teléfono?"
-      );
-      if (!confirmar) return;
-
-      try {
-        await api.delete(`numerosts/${id}/`);
-        // Filtra el teléfono eliminado de la lista local
-        this.telefonos = this.telefonos.filter((t) => t.id !== id);
-      } catch (error) {
-        this.error = "Error al eliminar el teléfono.";
-        console.error(error);
+    async confirmDelete(telefonoUrl) {
+      if (confirm("¿Estás segura de que quieres eliminar este teléfono?")) {
+        try {
+          await telefonoApi.deleteTelefono(telefonoUrl);
+          alert("¡Teléfono eliminado exitosamente!");
+          await this.fetchTelefonos(); // Recargar lista
+        } catch (err) {
+          console.error("Error al eliminar teléfono:", err);
+          alert("No se pudo eliminar el teléfono.");
+        }
       }
     },
   },
