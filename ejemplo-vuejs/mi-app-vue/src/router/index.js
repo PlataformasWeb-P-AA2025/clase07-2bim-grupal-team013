@@ -32,15 +32,20 @@ const routes = [
   },
   {
     path: "/telefonos",
-    name: "TelefonosList",
-    component: TelefonosList,
-    meta: { requiresAuth: true }, // Marca esta ruta como protegida
+    name: "TelefonoList",
+    component: () => import("@/components/TelefonoList.vue"),
   },
   {
-    path: "/telefonos/editar/:id",
-    name: "EditarTelefono",
-    component: TelefonoEdit,
-    meta: { requiresAuth: true },
+    path: "/telefonos/detalle",
+    name: "TelefonoDetail",
+    component: () => import("@/components/TelefonoDetail.vue"),
+    props: route => ({ telefonoUrl: route.params.telefonoUrl }),
+  },
+  {
+    path: "/telefonos/:telefonoUrl",
+    name: "TelefonoDetail",
+    component: () => import("@/components/TelefonoDetail.vue"),
+    props: true,
   },
 ];
 
