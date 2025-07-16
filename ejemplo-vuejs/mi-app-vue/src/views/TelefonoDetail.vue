@@ -9,30 +9,39 @@
     <p v-if="error" class="error-message">{{ error }}</p>
 
     <div v-else-if="telefono">
-      <div v-if="!isEditing">
+      <div v-if="!isEditing" class="detail-display">
         <p><strong>Teléfono:</strong> {{ telefono.telefono }}</p>
         <p><strong>Tipo:</strong> {{ telefono.tipo }}</p>
         <p><strong>Estudiante:</strong> {{ telefono.estudiante }}</p>
 
-        <button @click="startEditing" class="btn btn-edit">Editar</button>
+        <button @click="startEditing" class="btn-edit-detail">Editar</button>
       </div>
 
-      <form v-else @submit.prevent="saveTelefono">
-        <label for="telefono">Teléfono:</label>
-        <input id="telefono" v-model="editedTelefono.telefono" required />
-
-        <label for="tipo">Tipo:</label>
-        <input id="tipo" v-model="editedTelefono.tipo" required />
-
-        <label for="estudiante">Estudiante (URL):</label>
-        <input id="estudiante" v-model="editedTelefono.estudiante" required />
-
-        <div class="form-actions">
-          <button type="submit" class="btn-save">Guardar</button>
-          <button type="button" @click="cancelEditing" class="btn-delete">
-            Cancelar
-          </button>
+      <form v-else @submit.prevent="saveTelefono" class="edit-form">
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label>
+          <input id="telefono" v-model="editedTelefono.telefono" required />
         </div>
+        
+        <div class="form-group">
+          <label for="tipo">Tipo:</label>
+          <input id="tipo" v-model="editedTelefono.tipo" required />
+        </div>
+
+        <div class="form-group">
+          <label for="estudiante">Estudiante (URL):</label>
+          <input id="estudiante" v-model="editedTelefono.estudiante" required />
+        </div>
+        
+        <div class="form-group">
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Guardar</button>
+            <button type="button" @click="cancelEditing" class="btn-cancel">
+              Cancelar
+            </button>
+          </div>
+        </div>
+        
       </form>
     </div>
 
