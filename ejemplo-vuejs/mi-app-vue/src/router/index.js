@@ -3,6 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import Login from "../views/Login.vue";
 import EstudiantesList from "../views/EstudiantesList.vue";
 import EstudianteDetail from "../views/EstudianteDetail.vue";
+import TelefonosList from "../views/TelefonosList.vue";
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
     component: EstudianteDetail,
     props: true,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/telefonos",
+    name: "TelefonosList",
+    component: TelefonosList,
+    meta: { requiresAuth: true }, // Marca esta ruta como protegida
   },
 ];
 
