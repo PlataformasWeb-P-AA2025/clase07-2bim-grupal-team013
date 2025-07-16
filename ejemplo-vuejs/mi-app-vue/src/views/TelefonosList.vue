@@ -16,25 +16,31 @@
         <router-link
           :to="{
             name: 'TelefonoDetail',
-            params: { telefonoUrl: encodeURIComponent(telefono.url) }
+            params: { telefonoUrl: encodeURIComponent(telefono.url) },
           }"
           class="btn btn-detail"
-        >Ver Detalle</router-link>
+          >Ver Detalle</router-link
+        >
 
         <router-link
           :to="{
             name: 'TelefonoDetail',
             params: { telefonoUrl: encodeURIComponent(telefono.url) },
-            query: { mode: 'edit' }
+            query: { mode: 'edit' },
           }"
           class="btn btn-edit"
-        >Editar</router-link>
+          >Editar</router-link
+        >
 
-        <button @click="confirmDelete(telefono.url)" class="btn btn-delete">Eliminar</button>
+        <button @click="confirmDelete(telefono.url)" class="btn btn-delete">
+          Eliminar
+        </button>
       </li>
     </ul>
     <p v-else>No hay teléfonos registrados.</p>
-    <router-link to="/telefonos/nuevo" class="add-button">Agregar Teléfono</router-link>
+    <router-link to="/telefonos/nuevo" class="add-button"
+      >Agregar Teléfono</router-link
+    >
   </div>
 </template>
 

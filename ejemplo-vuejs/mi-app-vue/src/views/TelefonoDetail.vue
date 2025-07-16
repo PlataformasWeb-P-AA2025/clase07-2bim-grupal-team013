@@ -14,7 +14,7 @@
         <p><strong>Tipo:</strong> {{ telefono.tipo }}</p>
         <p><strong>Estudiante:</strong> {{ telefono.estudiante }}</p>
 
-        <button @click="startEditing" class="btn-edit-detail">Editar</button>
+        <button @click="startEditing" class="btn btn-edit">Editar</button>
       </div>
 
       <form v-else @submit.prevent="saveTelefono">
@@ -29,7 +29,9 @@
 
         <div class="form-actions">
           <button type="submit" class="btn-save">Guardar</button>
-          <button type="button" @click="cancelEditing" class="btn-cancel">Cancelar</button>
+          <button type="button" @click="cancelEditing" class="btn-delete">
+            Cancelar
+          </button>
         </div>
       </form>
     </div>
@@ -101,7 +103,10 @@ export default {
     async saveTelefono() {
       try {
         const url = decodeURIComponent(this.telefonoUrl);
-        const response = await telefonoApi.updateTelefono(url, this.editedTelefono);
+        const response = await telefonoApi.updateTelefono(
+          url,
+          this.editedTelefono
+        );
         this.telefono = { ...response.data };
         this.isEditing = false;
         this.router.replace({ query: {} });
@@ -130,55 +135,141 @@ export default {
 </script>
 
 <style scoped>
-li {
-  list-style-type: none;
+/* Estilos generales para el contenedor */
+.estudiante-detail-container {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  text-align: left;
 }
 
-.telefonos-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
+/* Botón de volver */
+.btn-back {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.2s ease;
 }
-.telefono-item {
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
+.btn-back:hover {
+  background-color: #5a6268;
 }
+
+/* Títulos */
+h2,
+h3,
+h4 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Mensajes de error */
 .error-message {
   color: red;
-}
-.btn {
-  margin: 0 1em 1em 1em;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  text-decoration: none; /* Para router-link */
   text-align: center;
-  white-space: nowrap; /* Evita que el texto del botón se rompa */
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-.btn-detail {
+/* Estilos para la visualización de detalles */
+.detail-display p {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.detail-display strong {
+  color: #555;
+  margin-right: 5px;
+}
+
+.detail-display ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.detail-display li {
+  margin-bottom: 5px;
+}
+
+/* Botón de editar en la vista de detalle */
+.btn-edit-detail {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  width: fit-content;
+  margin: 20px auto 0;
+  transition: background-color 0.2s ease;
+}
+.btn-edit-detail:hover {
+  background-color: #218838;
+}
+
+/* Estilos para el formulario de edición */
+.edit-form .form-group {
+  margin-bottom: 15px;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="email"],
+.edit-form input[type="number"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.btn-save {
   background-color: #007bff;
   color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.btn-detail:hover {
+.btn-save:hover {
   background-color: #0056b3;
 }
 
-.btn-edit {
-  background-color: #ffc107;
-  color: #333;
-}
-.btn-edit:hover {
-  background-color: #e0a800;
-}
-
-.btn-delete {
+.btn-cancel {
   background-color: #dc3545;
   color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.btn-delete:hover {
+.btn-cancel:hover {
   background-color: #c82333;
 }
 </style>

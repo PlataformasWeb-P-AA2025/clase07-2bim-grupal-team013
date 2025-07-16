@@ -4,7 +4,7 @@ import Login from "../views/Login.vue";
 import EstudiantesList from "../views/EstudiantesList.vue";
 import EstudianteDetail from "../views/EstudianteDetail.vue";
 import TelefonosList from "../views/TelefonosList.vue";
-import TelefonoEdit from "@/views/TelefonoEdit.vue";
+import TelefonoDetail from "@/views/TelefonoDetail.vue";
 
 const routes = [
   {
@@ -33,19 +33,19 @@ const routes = [
   {
     path: "/telefonos",
     name: "TelefonoList",
-    component: () => import("@/components/TelefonoList.vue"),
-  },
-  {
-    path: "/telefonos/detalle",
-    name: "TelefonoDetail",
-    component: () => import("@/components/TelefonoDetail.vue"),
-    props: route => ({ telefonoUrl: route.params.telefonoUrl }),
-  },
-  {
-    path: "/telefonos/:telefonoUrl",
-    name: "TelefonoDetail",
-    component: () => import("@/components/TelefonoDetail.vue"),
+    component: TelefonosList,
     props: true,
+    meta: { requiresAuth: true },
+    // component: () => import("@/components/TelefonoList.vue"),
+  },
+  {
+    path: "/telefonos/detalle/:telefonoUrl",
+    name: "TelefonoDetail",
+    component: TelefonoDetail,
+    props: true,
+    meta: { requiresAuth: true },
+    // component: () => import("@/components/TelefonoDetail.vue"),
+    // props: (route) => ({ telefonoUrl: route.params.telefonoUrl }),
   },
 ];
 
